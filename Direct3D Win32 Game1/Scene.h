@@ -1,5 +1,6 @@
 #pragma once
 #include "pch.h"
+#include "d3dcompiler.h"
 
 class Scene
 {
@@ -23,6 +24,6 @@ public:
 	void Render(ID3D12GraphicsCommandList* pd3dCommandList);
 
 private:
-	ID3D12RootSignature*							m_pd3dGraphicsRootSignature;
-	Microsoft::WRL::ComPtr<ID3D12PipelineState>		m_pd3dPipelineState;
+	Microsoft::WRL::ComPtr<ID3D12RootSignature>     m_pRootSignature;
+	Microsoft::WRL::ComPtr<ID3D12PipelineState>		m_pPipelineState;
 };
