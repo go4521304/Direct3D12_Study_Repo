@@ -65,7 +65,7 @@ void Game::Update(DX::StepTimer const& timer)
     float elapsedTime = float(timer.GetElapsedSeconds());
 
     // TODO: Add your game logic here.
-    if (m_pScene) m_pScene->Update(elapsedTime);
+    if (m_pScene) m_pScene->AnimateObjects(elapsedTime);
 }
 
 // Draws the scene.
@@ -81,7 +81,7 @@ void Game::Render()
     Clear();
 
     // TODO: Add your rendering code here.
-    if (m_pScene) m_pScene->Render(m_commandList);
+    if (m_pScene) m_pScene->Render(m_commandList.Get());
     
     // Show the new frame.
     Present();
@@ -320,7 +320,6 @@ void Game::CreateResources()
         m_renderTargets[n].Reset();
         m_fenceValues[n] = m_fenceValues[m_backBufferIndex];
     }
-
     const DXGI_FORMAT backBufferFormat = DXGI_FORMAT_B8G8R8A8_UNORM;
     const DXGI_FORMAT depthBufferFormat = DXGI_FORMAT_D32_FLOAT;
     const UINT backBufferWidth = static_cast<UINT>(m_outputWidth);
@@ -553,13 +552,13 @@ void Game::OnDeviceLost()
 void Game::BuildObject()
 {
     m_pScene = new Scene();
-    if (m_pScene) m_pScene->BuildObject(m_d3dDevice);
+    if (m_pScene) m_pScene->BuildObjects(m_d3dDevice.Get());
 
     m_timer.ResetElapsedTime();
 }
 
 void Game::ReleseObject()
 {
-    if (m_pScene) m_pScene()->ReleseObject();
+    if (m_pScene) m_pScene->ReleaseObjects();
     if (m_pScene) delete m_pScene;
 }

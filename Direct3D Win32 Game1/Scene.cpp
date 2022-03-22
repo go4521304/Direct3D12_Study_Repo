@@ -1,3 +1,4 @@
+#include "pch.h"
 #include "Scene.h"
 
 Scene::Scene()
@@ -40,12 +41,13 @@ void Scene::CreateGraphicsPipelineState(ID3D12Device* pd3dDevice)
 #if defined(_DEBUG)
 	nCompileFlags = D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION;
 #endif
-	D3DCompileFromFile(L"Shaders.hlsl", NULL, NULL, "VSMain", "vs_5_1", nCompileFlags, 0, &pVertexShader, NULL);
-	D3DCompileFromFile(L"Shaders.hlsl", NULL, NULL, "PSMain", "ps_5_1", nCompileFlags, 0, &pPixelShader, NULL);
+	DX::ThrowIfFailed(D3DCompileFromFile(L"VertexShader.hlsl", NULL, NULL, "main", "vs_5_1", nCompileFlags, 0, &pVertexShader, NULL));
+	DX::ThrowIfFailed(D3DCompileFromFile(L"PixelShader.hlsl", NULL, NULL, "main", "ps_5_1", nCompileFlags, 0, &pPixelShader, NULL));
 
 	//래스터라이저 상태를 설정한다. 
 	D3D12_RASTERIZER_DESC rasterizerDesc;
 	::ZeroMemory(&rasterizerDesc, sizeof(D3D12_RASTERIZER_DESC));
+
 	rasterizerDesc.FillMode = D3D12_FILL_MODE_SOLID;
 	rasterizerDesc.CullMode = D3D12_CULL_MODE_BACK;
 	rasterizerDesc.FrontCounterClockwise = FALSE;
@@ -61,6 +63,7 @@ void Scene::CreateGraphicsPipelineState(ID3D12Device* pd3dDevice)
 	//블렌드 상태를 설정한다. 
 	D3D12_BLEND_DESC blendDesc;
 	::ZeroMemory(&blendDesc, sizeof(D3D12_BLEND_DESC));
+
 	blendDesc.AlphaToCoverageEnable = FALSE;
 	blendDesc.IndependentBlendEnable = FALSE;
 	blendDesc.RenderTarget[0].BlendEnable = FALSE;
@@ -77,7 +80,8 @@ void Scene::CreateGraphicsPipelineState(ID3D12Device* pd3dDevice)
 	//그래픽 파이프라인 상태를 설정한다. 
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC posDesc;
 	::ZeroMemory(&posDesc, sizeof(D3D12_GRAPHICS_PIPELINE_STATE_DESC));
-	posDesc.pRootSignature = m_pd3dGraphicsRootSignature;
+
+	posDesc.pRootSignature = m_pRootSignature.Get();
 	posDesc.VS = CD3DX12_SHADER_BYTECODE(pVertexShader.Get());
 	posDesc.PS = CD3DX12_SHADER_BYTECODE(pPixelShader.Get());
 	posDesc.RasterizerState = rasterizerDesc;
@@ -89,22 +93,39 @@ void Scene::CreateGraphicsPipelineState(ID3D12Device* pd3dDevice)
 	posDesc.SampleMask = UINT_MAX;
 	posDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
 	posDesc.NumRenderTargets = 1;
-	posDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
+	posDesc.RTVFormats[0] = DXGI_FORMAT_B8G8R8A8_UNORM;
 	posDesc.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
 	posDesc.SampleDesc.Count = 1;
 	posDesc.SampleDesc.Quality = 0;
-	pd3dDevice->CreateGraphicsPipelineState(&posDesc, __uuidof(ID3D12PipelineState), (void**)&m_pd3dPipelineState);
-	
-	//if (pVertexShader) pVertexShader->Release();
-	//if (pPixelShader) pPixelShader->Release();
+	DX::ThrowIfFailed(pd3dDevice->CreateGraphicsPipelineState(&posDesc, IID_PPV_ARGS(&m_pPipelineState)));
 }
 
 void Scene::BuildObjects(ID3D12Device* pd3dDevice)
 {
+	CreateGraphicsRootSignature(pd3dDevice);
+	CreateGraphicsPipelineState(pd3dDevice);
 }
 
 void Scene::ReleaseObjects()
 {
-	if (m_pd3dGraphicsRootSignature) m_pd3dGraphicsRootSignature->Release();
-	if (m_pd3dPipelineState) m_pd3dPipelineState->Release();
+	if (m_pRootSignature) m_pRootSignature.Reset();
+	if (m_pPipelineState) m_pPipelineState.Reset();
+}
+
+bool Scene::ProcessInput()
+{
+	return false;
+}
+
+void Scene::AnimateObjects(float fTimeElapsed)
+{
+}
+
+void Scene::Render(ID3D12GraphicsCommandList* pd3dCommandList)
+{
+	pd3dCommandList->SetGraphicsRootSignature(m_pRootSignature.Get());
+	pd3dCommandList->SetPipelineState(m_pPipelineState.Get());
+	pd3dCommandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+	pd3dCommandList->DrawInstanced(3, 1, 0, 0);
 }

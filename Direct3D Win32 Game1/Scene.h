@@ -1,6 +1,4 @@
 #pragma once
-#include "pch.h"
-#include "d3dcompiler.h"
 
 class Scene
 {
@@ -20,7 +18,6 @@ public:
 	bool ProcessInput();
 	void AnimateObjects(float fTimeElapsed);
 
-	void PrepareRender(ID3D12GraphicsCommandList* pd3dCommandList);
 	void Render(ID3D12GraphicsCommandList* pd3dCommandList);
 
 private:

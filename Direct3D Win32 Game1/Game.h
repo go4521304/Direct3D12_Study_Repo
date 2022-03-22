@@ -5,6 +5,7 @@
 #pragma once
 
 #include "StepTimer.h"
+#include "pch.h"
 #include "Scene.h"
 
 // A basic game implementation that creates a D3D12 device and
