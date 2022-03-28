@@ -71,6 +71,7 @@
 #include <DirectXMath.h>
 #include <DirectXPackedVector.h>
 #include <DirectXColors.h>
+#include <DirectXCollision.h>
 
 #pragma comment(lib, "d3dcompiler.lib")
 #pragma comment(lib, "d3d12.lib")
@@ -80,6 +81,10 @@
 #ifdef _DEBUG
 #include <dxgidebug.h>
 #endif
+
+using namespace DirectX;
+using namespace DirectX::PackedVector;
+using Microsoft::WRL::ComPtr;
 
 namespace DX
 {
