@@ -28,7 +28,7 @@ void Scene::CreateGraphicsRootSignature(ID3D12Device* pd3dDevice)
 	Microsoft::WRL::ComPtr<ID3DBlob> pErrorBlob;
 
 	DX::ThrowIfFailed(D3D12SerializeRootSignature(&rootSigDesc, D3D_ROOT_SIGNATURE_VERSION_1, &pSigBlob, &pErrorBlob));
-	DX::ThrowIfFailed(pd3dDevice->CreateRootSignature(0, pSigBlob->GetBufferPointer(), pSigBlob->GetBufferSize(), IID_PPV_ARGS(&m_pRootSignature)));
+	DX::ThrowIfFailed(pd3dDevice->CreateRootSignature(0, pSigBlob->GetBufferPointer(), pSigBlob->GetBufferSize(), IID_PPV_ARGS(m_pRootSignature.GetAddressOf())));
 }
 
 void Scene::CreateGraphicsPipelineState(ID3D12Device* pd3dDevice)
@@ -97,7 +97,7 @@ void Scene::CreateGraphicsPipelineState(ID3D12Device* pd3dDevice)
 	posDesc.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
 	posDesc.SampleDesc.Count = 1;
 	posDesc.SampleDesc.Quality = 0;
-	DX::ThrowIfFailed(pd3dDevice->CreateGraphicsPipelineState(&posDesc, IID_PPV_ARGS(&m_pPipelineState)));
+	DX::ThrowIfFailed(pd3dDevice->CreateGraphicsPipelineState(&posDesc, IID_PPV_ARGS(m_pPipelineState.GetAddressOf())));
 }
 
 void Scene::BuildObjects(ID3D12Device* pd3dDevice)

@@ -1,6 +1,7 @@
 #pragma once
-
 #include "Mesh.h"
+using namespace std;
+
 
 class Shader;
 
@@ -19,20 +20,16 @@ public:
 
 protected:
 	XMFLOAT4X4 m_xmf4x4World;
-	Mesh* m_pMesh = NULL;
-	Shader* m_pShader = NULL;
+
+	vector<Mesh*> m_pMesh;
 
 public:
 	void ReleaseUploadBuffers();
 
 	virtual void SetMesh(Mesh* pMesh);
-	virtual void SetShader(Shader* pShader);
 
 	virtual void Animate(float fTimeElapsed);
 
 	virtual void OnPrepareRender();
 	virtual void Render(ID3D12GraphicsCommandList* pd3dCommandList);
-
 };
-
-// Shader 클래스 작성해야함

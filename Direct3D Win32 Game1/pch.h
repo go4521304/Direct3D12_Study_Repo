@@ -61,6 +61,7 @@
 #include <stdexcept>
 #include <system_error>
 #include <tchar.h>
+#include <vector>
 
 #include <string>
 #include <wrl.h>

@@ -29,13 +29,6 @@ void GameObject::SetMesh(Mesh* pMesh)
 	if (m_pMesh) m_pMesh->AddRef();
 }
 
-void GameObject::SetShader(Shader* pShader)
-{
-	if (m_pShader) m_pShader->Release();
-	m_pShader = pShader;
-	if (m_pShader) m_pShader->AddRef();
-}
-
 void GameObject::Animate(float fTimeElapsed)
 {
 }
