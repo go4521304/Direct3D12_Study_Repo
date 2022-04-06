@@ -21,7 +21,7 @@ public:
 protected:
 	XMFLOAT4X4 m_xmf4x4World;
 
-	Mesh *m_pMesh;
+	Mesh *m_pMesh = NULL;
 
 public:
 	void ReleaseUploadBuffers();

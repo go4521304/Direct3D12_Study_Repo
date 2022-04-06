@@ -25,7 +25,7 @@ void Scene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd
 	CreateGraphicsRootSignature(pd3dDevice);
 
 	//씬을 그리기 위한 셰이더 객체를 생성한다. 
-	m_pShader.emplace_back(Shader());
+	m_pShader.emplace_back(new Shader());
 	m_pShader.back()->CreateShader(pd3dDevice, m_pRootSignature.Get());
 	m_pShader.back()->BuildObjects(pd3dDevice, pd3dCommandList, NULL);
 }

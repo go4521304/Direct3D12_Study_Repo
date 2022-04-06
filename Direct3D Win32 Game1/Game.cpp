@@ -320,8 +320,8 @@ void Game::CreateResources()
         m_renderTargets[n].Reset();
         m_fenceValues[n] = m_fenceValues[m_backBufferIndex];
     }
-    const DXGI_FORMAT backBufferFormat = DXGI_FORMAT_B8G8R8A8_UNORM;
-    const DXGI_FORMAT depthBufferFormat = DXGI_FORMAT_D32_FLOAT;
+    const DXGI_FORMAT backBufferFormat = DXGI_FORMAT_R8G8B8A8_UNORM;
+    const DXGI_FORMAT depthBufferFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
     const UINT backBufferWidth = static_cast<UINT>(m_outputWidth);
     const UINT backBufferHeight = static_cast<UINT>(m_outputHeight);
 
@@ -554,7 +554,8 @@ void Game::BuildObject()
     m_commandList->Reset(m_commandAllocators[m_backBufferIndex].Get(), NULL);
 
 
-    m_pScene = new Scene();
+    m_pScene = make_unique<Scene>();
+
     if (m_pScene) m_pScene->BuildObjects(m_d3dDevice.Get(), m_commandList.Get());
 
     //씬 객체를 생성하기 위하여 필요한 그래픽 명령 리스트들을 명령 큐에 추가한다. 
@@ -562,23 +563,19 @@ void Game::BuildObject()
     ID3D12CommandList* ppd3dCommandLists[] = { m_commandList.Get()};
     m_commandQueue->ExecuteCommandLists(1, ppd3dCommandLists);
 
-    //그래픽 명령 리스트들이 모두 실행될 때까지 기다린다. 
-    WaitForSingleObjectEx(m_fenceEvent.Get(), INFINITE, FALSE);
+    //그래픽 명령 리스트들이 모두 실행될 때까지 기다린다.
+    WaitForGpu();
 
     //그래픽 리소스들을 생성하는 과정에 생성된 업로드 버퍼들을 소멸시킨다. 
-    for (auto i : m_pScene)
-    {
-        i->ReleaseUploadBuffers();
-    }
+    if (m_pScene)
+        m_pScene->ReleaseUploadBuffers();
 
     m_timer.ResetElapsedTime();
 }
 
 void Game::ReleseObject()
 {
-    for (auto i : m_pScene)
-    {
-        i->ReleaseObjects();
-    }
-    m_pScene.clear();
+    if (m_pScene)
+        m_pScene->ReleaseUploadBuffers();
+    m_pScene.reset();
 }

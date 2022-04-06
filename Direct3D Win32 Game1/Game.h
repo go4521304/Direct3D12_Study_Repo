@@ -94,5 +94,5 @@ private:
 	_TCHAR						                        m_pszFrameRate[50];
 
     // Game Scene
-    vector<Scene*>                                      m_pScene;
+    unique_ptr<Scene>                                   m_pScene;
 };

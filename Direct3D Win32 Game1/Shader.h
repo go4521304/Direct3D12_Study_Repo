@@ -35,6 +35,6 @@ protected:
 	vector<GameObject*> m_pObjects;
 
 	//파이프라인 상태 객체들의 리스트(배열)이다. 
-	ComPtr<ID3D12PipelineState> m_pPso;
-	int m_nPipelineStates = 0;
+	vector<ComPtr<ID3D12PipelineState>> m_pPso;
+	int m_nPso = 0;
 };

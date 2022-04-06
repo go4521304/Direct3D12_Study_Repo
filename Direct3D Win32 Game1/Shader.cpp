@@ -7,10 +7,11 @@ Shader::Shader()
 
 Shader::~Shader()
 {
-	if (m_pPso)
+	for (auto& i : m_pPso)
 	{
-		m_pPso.Reset();
+		i.Reset();
 	}
+	m_pPso.clear();
 }
 
 //입력 조립기에게 정점 버퍼의 구조를 알려주기 위한 구조체를 반환한다. 
@@ -69,12 +70,12 @@ D3D12_DEPTH_STENCIL_DESC Shader::CreateDepthStencilState()
 void Shader::CreateShader(ID3D12Device* pd3dDevice, ID3D12RootSignature* pd3dRootSignature)
 {
 	//그래픽스 파이프라인 상태 객체 배열을 생성한다. 
-	m_nPipelineStates = 1;
+	m_nPso = 1;
 
-	ComPtr<ID3D12PipelineState> m_ppd3dPipelineStates;
-	m_pPso.Attach(m_ppd3dPipelineStates.Get());
+	m_pPso.emplace_back(ComPtr<ID3D12PipelineState>());
 
-	ComPtr<ID3DBlob> vertexShader, pixelShader;
+	ComPtr<ID3DBlob> vertexShader;
+	ComPtr<ID3DBlob> pixelShader;
 
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC posDesc;
 	::ZeroMemory(&posDesc, sizeof(D3D12_GRAPHICS_PIPELINE_STATE_DESC));
@@ -93,7 +94,7 @@ void Shader::CreateShader(ID3D12Device* pd3dDevice, ID3D12RootSignature* pd3dRoo
 	posDesc.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
 	posDesc.SampleDesc.Count = 1;
 
-	DX::ThrowIfFailed(pd3dDevice->CreateGraphicsPipelineState(&posDesc, IID_PPV_ARGS(m_pPso.GetAddressOf())));
+	DX::ThrowIfFailed(pd3dDevice->CreateGraphicsPipelineState(&posDesc, IID_PPV_ARGS(m_pPso.back().GetAddressOf())));
 
 	if (posDesc.InputLayout.pInputElementDescs)
 		delete[] posDesc.InputLayout.pInputElementDescs;
@@ -103,7 +104,7 @@ void Shader::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* p
 {
 	TriangleMesh* pTriangleMesh = new TriangleMesh(pd3dDevice, pd3dCommandList);
 
-	m_pObjects.emplace_back(GameObject());
+	m_pObjects.emplace_back(new GameObject());
 	m_pObjects.back()->SetMesh(pTriangleMesh);
 }
 
@@ -131,7 +132,10 @@ void Shader::ReleaseUploadBuffers()
 void Shader::OnPrepareRender(ID3D12GraphicsCommandList* pd3dCommandList)
 {
 	//파이프라인에 그래픽스 상태 객체를 설정한다. 
-	pd3dCommandList->SetPipelineState(m_pPso.Get());
+	for (auto& i : m_pPso)
+	{
+		pd3dCommandList->SetPipelineState(i.Get());
+	}
 }
 
 void Shader::Render(ID3D12GraphicsCommandList* pd3dCommandList)
