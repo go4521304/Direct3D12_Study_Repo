@@ -13,8 +13,8 @@ using Microsoft::WRL::ComPtr;
 
 Game::Game() noexcept :
     m_window(nullptr),
-    m_outputWidth(800),
-    m_outputHeight(600),
+    m_outputWidth(FRAME_BUFFER_WIDTH),
+    m_outputHeight(FRAME_BUFFER_HEIGHT),
     m_featureLevel(D3D_FEATURE_LEVEL_11_0),
     m_backBufferIndex(0),
     m_rtvDescriptorSize(0),
@@ -106,12 +106,6 @@ void Game::Clear()
     m_commandList->OMSetRenderTargets(1, &rtvDescriptor, FALSE, &dsvDescriptor);
     m_commandList->ClearRenderTargetView(rtvDescriptor, Colors::CornflowerBlue, 0, nullptr);
     m_commandList->ClearDepthStencilView(dsvDescriptor, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
-
-    // Set the viewport and scissor rect.
-    D3D12_VIEWPORT viewport = { 0.0f, 0.0f, static_cast<float>(m_outputWidth), static_cast<float>(m_outputHeight), D3D12_MIN_DEPTH, D3D12_MAX_DEPTH };
-    D3D12_RECT scissorRect = { 0, 0, static_cast<LONG>(m_outputWidth), static_cast<LONG>(m_outputHeight) };
-    m_commandList->RSSetViewports(1, &viewport);
-    m_commandList->RSSetScissorRects(1, &scissorRect);
 }
 
 // Submits the command list to the GPU and presents the back buffer contents to the screen.
@@ -553,9 +547,15 @@ void Game::BuildObject()
 {
     m_commandList->Reset(m_commandAllocators[m_backBufferIndex].Get(), NULL);
 
+    //카메라 객체를 생성하여 뷰포트, 씨저 사각형, 투영 변환 행렬, 카메라 변환 행렬을 생성하고 설정한다.
+    m_pCamera = make_unique<Camera>();
+    m_pCamera->SetViewport(0, 0, m_outputWidth, m_outputHeight, 0.0f, 1.0f);
+    m_pCamera->SetScissorRect(0, 0, m_outputWidth, m_outputHeight);
+    m_pCamera->GenerateProjectionMatrix(1.0f, 500.0f, float(m_outputWidth) / float(m_outputHeight), 90.0f);
+    m_pCamera->GenerateViewMatrix(XMFLOAT3(0.0f, 0.0f, -2.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.0f, 1.0f, 0.0f));
 
+    //씬 객체를 생성하고 씬에 포함될 게임 객체들을 생성한다.
     m_pScene = make_unique<Scene>();
-
     if (m_pScene) m_pScene->BuildObjects(m_d3dDevice.Get(), m_commandList.Get());
 
     //씬 객체를 생성하기 위하여 필요한 그래픽 명령 리스트들을 명령 큐에 추가한다. 

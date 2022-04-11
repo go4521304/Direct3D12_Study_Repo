@@ -7,6 +7,7 @@
 #include "StepTimer.h"
 #include "pch.h"
 #include "Scene.h"
+#include "Camera.h"
 
 // A basic game implementation that creates a D3D12 device and
 // provides a game loop.
@@ -40,7 +41,6 @@ public:
     void GetDefaultSize( int& width, int& height ) const noexcept;
 
 private:
-
     void Update(DX::StepTimer const& timer);
     void Render();
 
@@ -95,4 +95,7 @@ private:
 
     // Game Scene
     unique_ptr<Scene>                                   m_pScene;
+
+public:
+    unique_ptr<Camera>                                  m_pCamera;
 };

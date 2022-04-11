@@ -43,6 +43,9 @@
     <ClInclude Include="GameObject.h">
       <Filter>Header</Filter>
     </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>Header</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Game.cpp">
@@ -64,6 +67,9 @@
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="GameObject.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Camera.cpp">
       <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>
