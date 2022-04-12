@@ -28,6 +28,10 @@ void GameObject::Animate(float fTimeElapsed)
 {
 }
 
+void GameObject::Rotate(XMFLOAT3* pxmf3Axis, float fAngle)
+{
+}
+
 void GameObject::OnPrepareRender()
 {
 }

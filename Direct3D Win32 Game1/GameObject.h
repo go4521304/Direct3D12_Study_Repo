@@ -1,10 +1,11 @@
 #pragma once
 #include "Mesh.h"
+#include "Shader.h"
 using namespace std;
 
 
-class Shader;
-
+//class Shader;
+// CRTP ∆–≈œ?
 class GameObject
 {
 public:
@@ -29,6 +30,8 @@ public:
 	virtual void SetMesh(Mesh* pMesh);
 
 	virtual void Animate(float fTimeElapsed);
+	void Rotate(XMFLOAT3* pxmf3Axis, float fAngle);
+
 
 	virtual void OnPrepareRender();
 	virtual void Render(ID3D12GraphicsCommandList* pd3dCommandList);
