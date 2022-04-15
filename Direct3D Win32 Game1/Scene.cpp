@@ -26,41 +26,32 @@ void Scene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd
 
 	TriangleMesh* pMesh = new TriangleMesh(pd3dDevice, pd3dCommandList);
 
-	RotatingObject* pObject = new RotatingObject();
+	unique_ptr<RotatingObject>pObject(new RotatingObject);
 	pObject->SetMesh(pMesh);
 
 	CDiffusedShader* pShader = new CDiffusedShader();
 	pShader->CreateShader(pd3dDevice, m_pd3dGraphicsRootSignature);
 	pShader->CreateShaderVariables(pd3dDevice, pd3dCommandList);
 
-	////씬을 그리기 위한 셰이더 객체를 생성한다. 
-	//m_pShader.emplace_back(new Shader());
-	//m_pShader.back()->CreateShader(pd3dDevice, m_pRootSignature.Get());
-	//m_pShader.back()->BuildObjects(pd3dDevice, pd3dCommandList, NULL);
+	pObject->SetShader(pShader);
+	m_ppObjects.push_back(move(pObject));
 }
 
 void Scene::ReleaseObjects()
 {
 	m_pRootSignature.Reset();
 
-	for (auto i : m_pShader)
-	{
-		i->ReleaseShaderVariables();
-		i->ReleaseObjects();
-		i->Release();
-	}
-	m_pShader.clear();
+	m_ppObjects.clear();
 }
 
 void Scene::ReleaseUploadBuffers()
 {
-	for (auto i : m_pShader)
+	for (const auto& i : m_ppObjects)
 	{
 		i->ReleaseUploadBuffers();
 	}
 }
 
-// 왜 굳이 반환값으로 설정했을까?
 ID3D12RootSignature* Scene::CreateGraphicsRootSignature(ID3D12Device* pd3dDevice)
 {
 	ID3D12RootSignature* rootSig = NULL;
@@ -79,8 +70,8 @@ ID3D12RootSignature* Scene::CreateGraphicsRootSignature(ID3D12Device* pd3dDevice
 	CD3DX12_ROOT_SIGNATURE_DESC rootSigDesc;
 	rootSigDesc.Init(_countof(rootParm), rootParm, 0, NULL, rootSigFlag);
 
-	Microsoft::WRL::ComPtr<ID3DBlob> pSigBlob;
-	Microsoft::WRL::ComPtr<ID3DBlob> pErrorBlob;
+	ComPtr<ID3DBlob> pSigBlob;
+	ComPtr<ID3DBlob> pErrorBlob;
 
 	DX::ThrowIfFailed(D3D12SerializeRootSignature(&rootSigDesc, D3D_ROOT_SIGNATURE_VERSION_1, &pSigBlob, &pErrorBlob));
 	DX::ThrowIfFailed(pd3dDevice->CreateRootSignature(0, pSigBlob->GetBufferPointer(), pSigBlob->GetBufferSize(), IID_PPV_ARGS(&rootSig)));
@@ -100,9 +91,9 @@ bool Scene::ProcessInput(UCHAR* pKeysBuffer)
 
 void Scene::AnimateObjects(float fTimeElapsed)
 {
-	for (auto i : m_pShader)
+	for (const auto& i : m_ppObjects)
 	{
-		i->AnimateObjects(fTimeElapsed);
+		i->Animate(fTimeElapsed);
 	}
 }
 
@@ -113,7 +104,7 @@ void Scene::Render(ID3D12GraphicsCommandList* pd3dCommandList, Camera* pCamera)
 
 	if (pCamera) pCamera->UpdateShaderVariables(pd3dCommandList);
 
-	for (auto i : m_pShader)
+	for (const auto& i : m_ppObjects)
 	{
 		i->Render(pd3dCommandList, pCamera);
 	}

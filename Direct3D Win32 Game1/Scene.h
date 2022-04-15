@@ -29,9 +29,7 @@ private:
 	ComPtr<ID3D12RootSignature>     m_pRootSignature;
 	ComPtr<ID3D12PipelineState>		m_pPipelineState;
 
-	vector<Shader*> m_pShader;
-
 protected:
 	//씬은 게임 객체들의 집합이다. 게임 객체는 셰이더를 포함한다.
-	vector<GameObject*> m_ppObjects;
+	vector<unique_ptr<GameObject>> m_ppObjects;
 };
