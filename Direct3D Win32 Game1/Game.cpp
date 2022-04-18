@@ -81,7 +81,7 @@ void Game::Render()
     Clear();
 
     // TODO: Add your rendering code here.
-    if (m_pScene) m_pScene->Render(m_commandList.Get());
+    if (m_pScene) m_pScene->Render(m_commandList.Get(), m_pCamera.get());
     
     // Show the new frame.
     Present();

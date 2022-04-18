@@ -29,8 +29,8 @@ void Scene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd
 	unique_ptr<RotatingObject>pObject(new RotatingObject);
 	pObject->SetMesh(pMesh);
 
-	CDiffusedShader* pShader = new CDiffusedShader();
-	pShader->CreateShader(pd3dDevice, m_pd3dGraphicsRootSignature);
+	DiffusedShader* pShader = new DiffusedShader();
+	pShader->CreateShader(pd3dDevice, m_pRootSignature.Get());
 	pShader->CreateShaderVariables(pd3dDevice, pd3dCommandList);
 
 	pObject->SetShader(pShader);
