@@ -24,7 +24,7 @@ void Scene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd
 	//그래픽 루트 시그너쳐를 생성한다. 
 	m_pRootSignature = CreateGraphicsRootSignature(pd3dDevice);
 
-	TriangleMesh* pMesh = new TriangleMesh(pd3dDevice, pd3dCommandList);
+	CubeMeshDiffused* pMesh = new CubeMeshDiffused(pd3dDevice, pd3dCommandList, 12.0f, 12.0f, 12.0f);
 
 	unique_ptr<RotatingObject>pObject(new RotatingObject);
 	pObject->SetMesh(pMesh);
@@ -56,7 +56,7 @@ ID3D12RootSignature* Scene::CreateGraphicsRootSignature(ID3D12Device* pd3dDevice
 {
 	ID3D12RootSignature* rootSig = NULL;
 
-	CD3DX12_ROOT_PARAMETER rootParm[2];
+	CD3DX12_ROOT_PARAMETER rootParm[2] = {};
 	rootParm[0].InitAsConstants(16, 0, 0, D3D12_SHADER_VISIBILITY_VERTEX);
 	rootParm[1].InitAsConstants(32, 1, 0, D3D12_SHADER_VISIBILITY_VERTEX);
 

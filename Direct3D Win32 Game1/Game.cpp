@@ -552,7 +552,7 @@ void Game::BuildObject()
     m_pCamera->SetViewport(0, 0, m_outputWidth, m_outputHeight, 0.0f, 1.0f);
     m_pCamera->SetScissorRect(0, 0, m_outputWidth, m_outputHeight);
     m_pCamera->GenerateProjectionMatrix(1.0f, 500.0f, float(m_outputWidth) / float(m_outputHeight), 90.0f);
-    m_pCamera->GenerateViewMatrix(XMFLOAT3(0.0f, 0.0f, -2.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.0f, 1.0f, 0.0f));
+    m_pCamera->GenerateViewMatrix(XMFLOAT3(0.0f, 15.0f, -25.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.0f, 1.0f, 0.0f));
 
     //씬 객체를 생성하고 씬에 포함될 게임 객체들을 생성한다.
     m_pScene = make_unique<Scene>();
