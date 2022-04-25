@@ -57,6 +57,17 @@ protected:
 	UINT m_nStride = 0;
 	UINT m_nOffset = 0;
 
+/*인덱스 버퍼(인덱스의 배열)와 인덱스 버퍼를 위한 업로드 버퍼에 대한 인터페이스 포인터이다. 인덱스 버퍼는 정점 버퍼(배열)에 대한 인덱스를 가진다.*/
+protected:
+	ComPtr<ID3D12Resource> m_IndexBuffer;
+	ComPtr<ID3D12Resource> m_IndexUploadBuffer;
+
+	D3D12_INDEX_BUFFER_VIEW m_IndexBufferView;
+
+	UINT m_nIndices = 0;	// 인덱스의 개수
+	UINT m_nStartIndex = 0;	// 메쉬를 그리기 위해 사용하는 시작 인덱스
+	UINT m_nBaseVertex = 0;	// 인덱스 버퍼의 인덱스에 더해질 인덱스
+
 public:
 	virtual void Render(ID3D12GraphicsCommandList* pd3dCommandList);
 };

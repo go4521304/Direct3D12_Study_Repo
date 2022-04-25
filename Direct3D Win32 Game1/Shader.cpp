@@ -50,7 +50,8 @@ D3D12_SHADER_BYTECODE Shader::CreatePixelShader(ID3DBlob** ppd3dShaderBlob)
 
 D3D12_RASTERIZER_DESC Shader::CreateRasterizerState()
 {
-	return CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
+	return CD3DX12_RASTERIZER_DESC(D3D12_FILL_MODE_WIREFRAME, D3D12_CULL_MODE_NONE, FALSE, D3D12_DEFAULT_DEPTH_BIAS, D3D12_DEFAULT_DEPTH_BIAS_CLAMP, D3D12_DEFAULT_SLOPE_SCALED_DEPTH_BIAS, TRUE, FALSE, FALSE, 0, D3D12_CONSERVATIVE_RASTERIZATION_MODE_OFF);
+	//return CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
 }
 
 D3D12_BLEND_DESC Shader::CreateBlendState()
@@ -85,9 +86,7 @@ void Shader::CreateShader(ID3D12Device* pd3dDevice, ID3D12RootSignature* pd3dRoo
 	posDesc.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
 	posDesc.SampleDesc.Count = 1;
 
-	//DX::ThrowIfFailed(pd3dDevice->CreateGraphicsPipelineState(&posDesc, IID_PPV_ARGS(&m_pPso[0])));
-	pd3dDevice->CreateGraphicsPipelineState(&posDesc,
-		__uuidof(ID3D12PipelineState), (void**)&m_pPso[0]);
+	DX::ThrowIfFailed(pd3dDevice->CreateGraphicsPipelineState(&posDesc, IID_PPV_ARGS(&m_pPso[0])));
 
 	if (posDesc.InputLayout.pInputElementDescs)
 		delete[] posDesc.InputLayout.pInputElementDescs;
