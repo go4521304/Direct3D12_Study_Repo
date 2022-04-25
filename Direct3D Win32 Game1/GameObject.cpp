@@ -18,6 +18,24 @@ GameObject::~GameObject()
 	}
 }
 
+void GameObject::CreateShaderVariables(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList)
+{
+	pd3dDevice->CreateConstantBufferView()
+}
+
+void GameObject::UpdateShaderVariables(ID3D12GraphicsCommandList* pd3dCommandList)
+{
+	XMFLOAT4X4 xmf4x4World;
+	XMStoreFloat4x4(&xmf4x4World, XMMatrixTranspose(XMLoadFloat4x4(&m_xmf4x4World)));
+
+
+	pd3dCommandList->SetGraphicsRootConstantBufferView(0, )
+}
+
+void GameObject::ReleaseShaderVariables()
+{
+}
+
 void GameObject::ReleaseUploadBuffers()
 {
 	//정점 버퍼를 위한 업로드 버퍼를 소멸시킨다.

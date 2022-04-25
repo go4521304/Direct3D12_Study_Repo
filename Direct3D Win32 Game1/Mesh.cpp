@@ -10,8 +10,8 @@ Mesh::~Mesh()
 	if (m_pd3dVertexBuffer) m_pd3dVertexBuffer.Reset();
 	if (m_pd3dVertexUploadBuffer) m_pd3dVertexUploadBuffer.Reset();
 
-	if (m_IndexBuffer) m_IndexBuffer.Reset();
-	if (m_IndexUploadBuffer) m_IndexUploadBuffer.Reset();
+	if (m_indexBuffer) m_indexBuffer.Reset();
+	if (m_indexUploadBuffer) m_indexUploadBuffer.Reset();
 }
 
 void Mesh::ReleaseUploadBuffers()
@@ -19,7 +19,7 @@ void Mesh::ReleaseUploadBuffers()
 	//정점 버퍼를 위한 업로드 버퍼를 소멸시킨다. 
 	if (m_pd3dVertexUploadBuffer) m_pd3dVertexUploadBuffer.Reset();
 
-	if (m_IndexUploadBuffer) m_IndexUploadBuffer.Reset();
+	if (m_indexUploadBuffer) m_indexUploadBuffer.Reset();
 }
 
 void Mesh::Render(ID3D12GraphicsCommandList* pd3dCommandList)
@@ -30,9 +30,9 @@ void Mesh::Render(ID3D12GraphicsCommandList* pd3dCommandList)
 	//메쉬의 정점 버퍼 뷰를 설정한다. 
 	pd3dCommandList->IASetVertexBuffers(m_nSlot, 1, &m_d3dVertexBufferView);
 
-	if (m_IndexBuffer)
+	if (m_indexBuffer)
 	{
-		pd3dCommandList->IASetIndexBuffer(&m_IndexBufferView);
+		pd3dCommandList->IASetIndexBuffer(&m_indexBufferView);
 		pd3dCommandList->DrawIndexedInstanced(m_nIndices, 1, 0, 0, 0);
 	}
 	else
@@ -131,13 +131,13 @@ CubeMeshDiffused::CubeMeshDiffused(ID3D12Device* pd3dDevice, ID3D12GraphicsComma
 	pnIndices[33] = 7; pnIndices[34] = 4; pnIndices[35] = 6;
 
 	//인덱스 버퍼를 생성한다. 
-	m_IndexBuffer.Attach(::CreateBufferResource(pd3dDevice, pd3dCommandList, pnIndices, 
-		sizeof(UINT) * m_nIndices, D3D12_HEAP_TYPE_DEFAULT, D3D12_RESOURCE_STATE_INDEX_BUFFER,&m_IndexUploadBuffer));
+	m_indexBuffer.Attach(::CreateBufferResource(pd3dDevice, pd3dCommandList, pnIndices, 
+		sizeof(UINT) * m_nIndices, D3D12_HEAP_TYPE_DEFAULT, D3D12_RESOURCE_STATE_INDEX_BUFFER,&m_indexUploadBuffer));
 
 	//인덱스 버퍼 뷰를 생성한다. 
-	m_IndexBufferView.BufferLocation = m_IndexBuffer->GetGPUVirtualAddress();
-	m_IndexBufferView.Format = DXGI_FORMAT_R32_UINT;
-	m_IndexBufferView.SizeInBytes = sizeof(UINT) * m_nIndices;
+	m_indexBufferView.BufferLocation = m_indexBuffer->GetGPUVirtualAddress();
+	m_indexBufferView.Format = DXGI_FORMAT_R32_UINT;
+	m_indexBufferView.SizeInBytes = sizeof(UINT) * m_nIndices;
 }
 
 CubeMeshDiffused::~CubeMeshDiffused()
