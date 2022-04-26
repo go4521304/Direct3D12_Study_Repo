@@ -30,6 +30,7 @@ public:
 	// 상수 버퍼
 	ComPtr<ID3D12Resource> m_constantBuffer;
 	ComPtr<ID3D12Resource> m_constantUploadBuffer;
+	D3D12_CONSTANT_BUFFER_VIEW_DESC m_constantView;
 
 	virtual void CreateShaderVariables(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList);
 	virtual void UpdateShaderVariables(ID3D12GraphicsCommandList* pd3dCommandList);

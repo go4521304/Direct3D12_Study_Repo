@@ -20,7 +20,17 @@ GameObject::~GameObject()
 
 void GameObject::CreateShaderVariables(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList)
 {
-	pd3dDevice->CreateConstantBufferView()
+	//https://codingfarm.tistory.com/562
+	DX::ThrowIfFailed(pd3dDevice->CreateCommittedResource(
+		&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD),
+		D3D12_HEAP_FLAG_NONE,
+		&CD3DX12_RESOURCE_DESC::Buffer(sizeof(XMFLOAT4X4)),
+		D3D12_RESOURCE_STATE_GENERIC_READ,
+		nullptr,
+		IID_PPV_ARGS(m_constantUploadBuffer.GetAddressOf())));
+
+	m_constantView.BufferLocation = m_constantBuffer->GetGPUVirtualAddress();
+	m_constantView.SizeInBytes = sizeof(XMFLOAT4X4);
 }
 
 void GameObject::UpdateShaderVariables(ID3D12GraphicsCommandList* pd3dCommandList)
