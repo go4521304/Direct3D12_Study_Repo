@@ -35,7 +35,7 @@ public:
 class Mesh
 {
 public:
-	Mesh(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList);
+	Mesh(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* commandList);
 	virtual ~Mesh();
 
 private:
@@ -70,19 +70,19 @@ protected:
 	UINT m_nBaseVertex = 0;	// 인덱스 버퍼의 인덱스에 더해질 인덱스
 
 public:
-	virtual void Render(ID3D12GraphicsCommandList* pd3dCommandList);
+	virtual void Render(ID3D12GraphicsCommandList* commandList);
 };
 
 class TriangleMesh : public Mesh
 {
 public:
-	TriangleMesh(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList);
+	TriangleMesh(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* commandList);
 	virtual ~TriangleMesh() { }
 };
 
 class CubeMeshDiffused : public Mesh
 {
 public:
-	CubeMeshDiffused(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, float fWidth = 2.0f, float fHeight = 2.0f, float fDepth = 2.0f);
+	CubeMeshDiffused(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList* commandList, float fWidth = 2.0f, float fHeight = 2.0f, float fDepth = 2.0f);
 	virtual ~CubeMeshDiffused();
 };

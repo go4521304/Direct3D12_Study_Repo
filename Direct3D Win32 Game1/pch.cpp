@@ -7,7 +7,7 @@
 
 /*버퍼 리소스를 생성하는 함수이다. 버퍼의 힙 유형에 따라 버퍼 리소스를 생성하고 초기화 데이터가 있으면 초기화한다.*/
 ID3D12Resource* CreateBufferResource(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList
-	* pd3dCommandList, void* pData, UINT nBytes, D3D12_HEAP_TYPE d3dHeapType,
+	* commandList, void* pData, UINT nBytes, D3D12_HEAP_TYPE d3dHeapType,
 	D3D12_RESOURCE_STATES d3dResourceStates, ID3D12Resource** ppd3dUploadBuffer)
 {
 	ID3D12Resource* pd3dBuffer = NULL;
@@ -59,7 +59,7 @@ ID3D12Resource* CreateBufferResource(ID3D12Device* pd3dDevice, ID3D12GraphicsCom
 				memcpy(pBufferDataBegin, pData, nBytes);
 				(*ppd3dUploadBuffer)->Unmap(0, NULL);
 				//업로드 버퍼의 내용을 디폴트 버퍼에 복사한다. 
-				pd3dCommandList->CopyResource(pd3dBuffer, *ppd3dUploadBuffer);
+				commandList->CopyResource(pd3dBuffer, *ppd3dUploadBuffer);
 				D3D12_RESOURCE_BARRIER d3dResourceBarrier;
 				::ZeroMemory(&d3dResourceBarrier, sizeof(D3D12_RESOURCE_BARRIER));
 				d3dResourceBarrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
@@ -69,7 +69,7 @@ ID3D12Resource* CreateBufferResource(ID3D12Device* pd3dDevice, ID3D12GraphicsCom
 				d3dResourceBarrier.Transition.StateAfter = d3dResourceStates;
 				d3dResourceBarrier.Transition.Subresource =
 					D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
-				pd3dCommandList->ResourceBarrier(1, &d3dResourceBarrier);
+				commandList->ResourceBarrier(1, &d3dResourceBarrier);
 			}
 			break;
 		}

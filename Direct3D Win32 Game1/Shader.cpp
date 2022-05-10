@@ -91,7 +91,7 @@ void Shader::CreateShader(ID3D12Device* pd3dDevice, ID3D12RootSignature* pd3dRoo
 		delete[] posDesc.InputLayout.pInputElementDescs;
 }
 
-void Shader::CreateShaderVariables(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList)
+void Shader::CreateShaderVariables(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* commandList)
 { 
 }
 
@@ -99,22 +99,22 @@ void Shader::ReleaseShaderVariables()
 {
 }
 
-void Shader::UpdateShaderVariables(ID3D12GraphicsCommandList* pd3dCommandList, XMFLOAT4X4* p4x4World)
+void Shader::UpdateShaderVariables(ID3D12GraphicsCommandList* commandList, XMFLOAT4X4* p4x4World)
 {
 	XMFLOAT4X4 m4x4World;;
 	XMStoreFloat4x4(&m4x4World, XMMatrixTranspose(XMLoadFloat4x4(p4x4World)));
-	pd3dCommandList->SetGraphicsRoot32BitConstants(0, 16, &m4x4World, 0);
+	commandList->SetGraphicsRoot32BitConstants(0, 16, &m4x4World, 0);
 }
 
-void Shader::OnPrepareRender(ID3D12GraphicsCommandList* pd3dCommandList)
+void Shader::OnPrepareRender(ID3D12GraphicsCommandList* commandList)
 {
 	//파이프라인에 그래픽스 상태 객체를 설정한다. 
-	pd3dCommandList->SetPipelineState(m_pPso[0]);
+	commandList->SetPipelineState(m_pPso[0]);
 }
 
-void Shader::Render(ID3D12GraphicsCommandList* pd3dCommandList, Camera* pCamera)
+void Shader::Render(ID3D12GraphicsCommandList* commandList, Camera* pCamera)
 {
-	OnPrepareRender(pd3dCommandList);
+	OnPrepareRender(commandList);
 }
 
 /////////////////////////////////// DiffusedShader ///////////////////////////////////

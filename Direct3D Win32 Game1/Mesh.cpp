@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "Mesh.h"
 
-Mesh::Mesh(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList)
+Mesh::Mesh(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* commandList)
 {
 }
 
@@ -22,29 +22,29 @@ void Mesh::ReleaseUploadBuffers()
 	if (m_indexUploadBuffer) m_indexUploadBuffer.Reset();
 }
 
-void Mesh::Render(ID3D12GraphicsCommandList* pd3dCommandList)
+void Mesh::Render(ID3D12GraphicsCommandList* commandList)
 {
 	//메쉬의 프리미티브 유형을 설정한다. 
-	pd3dCommandList->IASetPrimitiveTopology(m_d3dPrimitiveTopology);
+	commandList->IASetPrimitiveTopology(m_d3dPrimitiveTopology);
 
 	//메쉬의 정점 버퍼 뷰를 설정한다. 
-	pd3dCommandList->IASetVertexBuffers(m_nSlot, 1, &m_d3dVertexBufferView);
+	commandList->IASetVertexBuffers(m_nSlot, 1, &m_d3dVertexBufferView);
 
 	if (m_indexBuffer)
 	{
-		pd3dCommandList->IASetIndexBuffer(&m_indexBufferView);
-		pd3dCommandList->DrawIndexedInstanced(m_nIndices, 1, 0, 0, 0);
+		commandList->IASetIndexBuffer(&m_indexBufferView);
+		commandList->DrawIndexedInstanced(m_nIndices, 1, 0, 0, 0);
 	}
 	else
 	{
 		//메쉬의 정점 버퍼 뷰를 렌더링한다(파이프라인(입력 조립기)을 작동하게 한다).
-		pd3dCommandList->DrawInstanced(m_nVertices, 1, m_nOffset, 0);
+		commandList->DrawInstanced(m_nVertices, 1, m_nOffset, 0);
 	}
 }
 
 //***********************************************************************************************************************************//
 
-TriangleMesh::TriangleMesh(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList) : Mesh(pd3dDevice, pd3dCommandList)
+TriangleMesh::TriangleMesh(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* commandList) : Mesh(pd3dDevice, commandList)
 {
 	// 삼각형 메쉬를 정의한다.
 	m_nVertices = 3;
@@ -59,7 +59,7 @@ Alpha) 4개의 파라메터를 사용하여 색상을 표현한다. 각 파라메터는 0.0~1.0 사이의 �
 	pVertices[2] = DiffusedVertex(XMFLOAT3(-0.5f, -0.5f, 0.0f), XMFLOAT4(Colors::Blue));
 
 	//삼각형 메쉬를 리소스(정점 버퍼)로 생성한다.
-	m_pd3dVertexBuffer.Attach(::CreateBufferResource(pd3dDevice, pd3dCommandList, pVertices,
+	m_pd3dVertexBuffer.Attach(::CreateBufferResource(pd3dDevice, commandList, pVertices,
 		m_nStride * m_nVertices, D3D12_HEAP_TYPE_DEFAULT,
 		D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER, &m_pd3dVertexUploadBuffer));
 
@@ -71,7 +71,7 @@ Alpha) 4개의 파라메터를 사용하여 색상을 표현한다. 각 파라메터는 0.0~1.0 사이의 �
 
 //***********************************************************************************************************************************//
 
-CubeMeshDiffused::CubeMeshDiffused(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, float fWidth, float fHeight, float fDepth) : Mesh(pd3dDevice, pd3dCommandList)
+CubeMeshDiffused::CubeMeshDiffused(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* commandList, float fWidth, float fHeight, float fDepth) : Mesh(pd3dDevice, commandList)
 {
 	//직육면체는 6개의 면 가로(x-축) 길이
 	m_nVertices = 8;
@@ -91,7 +91,7 @@ CubeMeshDiffused::CubeMeshDiffused(ID3D12Device* pd3dDevice, ID3D12GraphicsComma
 	pVertices[6] = DiffusedVertex(XMFLOAT3(+fx, -fy, +fz), RANDOM_COLOR);
 	pVertices[7] = DiffusedVertex(XMFLOAT3(-fx, -fy, +fz), RANDOM_COLOR);
 
-	m_pd3dVertexBuffer.Attach(::CreateBufferResource(pd3dDevice, pd3dCommandList, pVertices, m_nStride * m_nVertices,
+	m_pd3dVertexBuffer.Attach(::CreateBufferResource(pd3dDevice, commandList, pVertices, m_nStride * m_nVertices,
 		D3D12_HEAP_TYPE_DEFAULT, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER, &m_pd3dVertexUploadBuffer));
 
 	//정점 버퍼 뷰를 생성한다. 
@@ -131,7 +131,7 @@ CubeMeshDiffused::CubeMeshDiffused(ID3D12Device* pd3dDevice, ID3D12GraphicsComma
 	pnIndices[33] = 7; pnIndices[34] = 4; pnIndices[35] = 6;
 
 	//인덱스 버퍼를 생성한다. 
-	m_indexBuffer.Attach(::CreateBufferResource(pd3dDevice, pd3dCommandList, pnIndices, 
+	m_indexBuffer.Attach(::CreateBufferResource(pd3dDevice, commandList, pnIndices, 
 		sizeof(UINT) * m_nIndices, D3D12_HEAP_TYPE_DEFAULT, D3D12_RESOURCE_STATE_INDEX_BUFFER,&m_indexUploadBuffer));
 
 	//인덱스 버퍼 뷰를 생성한다. 

@@ -19,19 +19,19 @@ bool Scene::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM wPara
 	return false;
 }
 
-void Scene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList)
+void Scene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* commandList)
 {
 	//그래픽 루트 시그너쳐를 생성한다. 
 	m_pRootSignature = CreateGraphicsRootSignature(pd3dDevice);
 
-	CubeMeshDiffused* pMesh = new CubeMeshDiffused(pd3dDevice, pd3dCommandList, 12.0f, 12.0f, 12.0f);
+	CubeMeshDiffused* pMesh = new CubeMeshDiffused(pd3dDevice, commandList, 12.0f, 12.0f, 12.0f);
 
 	unique_ptr<RotatingObject>pObject(new RotatingObject);
 	pObject->SetMesh(pMesh);
 
 	DiffusedShader* pShader = new DiffusedShader();
 	pShader->CreateShader(pd3dDevice, m_pRootSignature.Get());
-	pShader->CreateShaderVariables(pd3dDevice, pd3dCommandList);
+	pShader->CreateShaderVariables(pd3dDevice, commandList);
 
 	pObject->SetShader(pShader);
 	m_ppObjects.push_back(move(pObject));
@@ -89,23 +89,23 @@ bool Scene::ProcessInput(UCHAR* pKeysBuffer)
 	return false;
 }
 
-void Scene::AnimateObjects(float fTimeElapsed)
+void Scene::AnimateObjects(float timeElapsed)
 {
 	for (const auto& i : m_ppObjects)
 	{
-		i->Animate(fTimeElapsed);
+		i->Animate(timeElapsed);
 	}
 }
 
-void Scene::Render(ID3D12GraphicsCommandList* pd3dCommandList, Camera* pCamera)
+void Scene::Render(ID3D12GraphicsCommandList* commandList, Camera* pCamera)
 {
-	pCamera->SetViewportsAndScissorRects(pd3dCommandList);
-	pd3dCommandList->SetGraphicsRootSignature(m_pRootSignature.Get());
+	pCamera->SetViewportsAndScissorRects(commandList);
+	commandList->SetGraphicsRootSignature(m_pRootSignature.Get());
 
-	if (pCamera) pCamera->UpdateShaderVariables(pd3dCommandList);
+	if (pCamera) pCamera->UpdateShaderVariables(commandList);
 
 	for (const auto& i : m_ppObjects)
 	{
-		i->Render(pd3dCommandList, pCamera);
+		i->Render(commandList, pCamera);
 	}
 }

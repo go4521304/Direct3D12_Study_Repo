@@ -24,14 +24,14 @@ public:
 
 
 	virtual void CreateShader(ID3D12Device* pd3dDevice, ID3D12RootSignature* pd3dRootSignature);
-	virtual void CreateShaderVariables(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList);
+	virtual void CreateShaderVariables(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* commandList);
 
 	virtual void ReleaseShaderVariables();
 
-	virtual void UpdateShaderVariables(ID3D12GraphicsCommandList* pd3dCommandList, XMFLOAT4X4 *p4x4World);
+	virtual void UpdateShaderVariables(ID3D12GraphicsCommandList* commandList, XMFLOAT4X4 *p4x4World);
 
-	virtual void OnPrepareRender(ID3D12GraphicsCommandList* pd3dCommandList);
-	virtual void Render(ID3D12GraphicsCommandList* pd3dCommandList, Camera *pCamera);
+	virtual void OnPrepareRender(ID3D12GraphicsCommandList* commandList);
+	virtual void Render(ID3D12GraphicsCommandList* commandList, Camera *pCamera);
 
 protected:
 	//셰이더가 포함하는 게임 객체들의 리스트(배열)이다. 

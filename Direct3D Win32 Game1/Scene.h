@@ -12,12 +12,12 @@ public:
 	bool OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam);
 	bool OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam);
 
-	void BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList);
+	void BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* commandList);
 	void ReleaseObjects();
 
 	bool ProcessInput(UCHAR* pKeysBuffer);
-	void AnimateObjects(float fTimeElapsed);
-	void Render(ID3D12GraphicsCommandList* pd3dCommandList, Camera* pCamera);
+	void AnimateObjects(float timeElapsed);
+	void Render(ID3D12GraphicsCommandList* commandList, Camera* pCamera);
 
 	void ReleaseUploadBuffers();
 

@@ -560,8 +560,8 @@ void Game::BuildObject()
 
     //씬 객체를 생성하기 위하여 필요한 그래픽 명령 리스트들을 명령 큐에 추가한다. 
     m_commandList->Close();
-    ID3D12CommandList* ppd3dCommandLists[] = { m_commandList.Get()};
-    m_commandQueue->ExecuteCommandLists(1, ppd3dCommandLists);
+    ID3D12CommandList* pcommandLists[] = { m_commandList.Get()};
+    m_commandQueue->ExecuteCommandLists(1, pcommandLists);
 
     //그래픽 명령 리스트들이 모두 실행될 때까지 기다린다.
     WaitForGpu();
