@@ -28,28 +28,48 @@ public:
 
 	virtual void ReleaseShaderVariables();
 
-	virtual void UpdateShaderVariables(ID3D12GraphicsCommandList* commandList, XMFLOAT4X4 *p4x4World);
+	virtual void UpdateShaderVariables(ID3D12GraphicsCommandList* commandList, XMFLOAT4X4* p4x4World);
 
 	virtual void OnPrepareRender(ID3D12GraphicsCommandList* commandList);
-	virtual void Render(ID3D12GraphicsCommandList* commandList, Camera *pCamera);
+	virtual void Render(ID3D12GraphicsCommandList* commandList, Camera* pCamera);
 
 protected:
 	//셰이더가 포함하는 게임 객체들의 리스트(배열)이다. 
 	vector<GameObject*> m_pObjects;
 
 	//파이프라인 상태 객체들의 리스트(배열)이다. 
-	ID3D12PipelineState** m_pPso;
+	vector<ComPtr<ID3D12PipelineState>> m_pPso;
 };
 
-class DiffusedShader : public Shader
+class PlayerShader : public Shader
 {
 public:
-	DiffusedShader();
-	virtual ~DiffusedShader();
+	PlayerShader();
+	virtual ~PlayerShader();
 
 	virtual D3D12_INPUT_LAYOUT_DESC CreateInputLayout();
 	virtual D3D12_SHADER_BYTECODE CreateVertexShader(ID3DBlob** ppd3dShaderBlob);
 	virtual D3D12_SHADER_BYTECODE CreatePixelShader(ID3DBlob** ppd3dShaderBlob);
 
-	virtual void CreateShader(ID3D12Device* pd3dDevice, ID3D12RootSignature* pd3dGraphicsRootSignature);
+	virtual void CreateShader(ID3D12Device* pd3dDevice, ID3D12RootSignature* pd3dRootSignature);
+};
+
+class ObjectShader : public Shader
+{
+public:
+	ObjectShader();
+	virtual ~ObjectShader();
+
+	virtual D3D12_INPUT_LAYOUT_DESC CreateInputLayout();
+	virtual D3D12_SHADER_BYTECODE CreateVertexShader(ID3DBlob** ppd3dShaderBlob);
+	virtual D3D12_SHADER_BYTECODE CreatePixelShader(ID3DBlob** ppd3dShaderBlob);
+	virtual void CreateShader(ID3D12Device* pd3dDevice, ID3D12RootSignature* pd3dRootSignature);
+
+	virtual void BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* commandList);
+	virtual void ReleaseObjects();
+	virtual void AnimateObjects(float timeElapsed);
+	
+	virtual void ReleaseUploadBuffers();
+	
+	virtual void Render(ID3D12GraphicsCommandList* commandList, Camera* pCamera);
 };

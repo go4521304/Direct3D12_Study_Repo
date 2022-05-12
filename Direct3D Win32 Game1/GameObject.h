@@ -71,8 +71,8 @@ private:
 	float m_fRotatingSpeed;
 
 public:
-	void SetRotateSpeed(float Speed) { m_fRotatingSpeed = Speed; }
-	void SetRotateAxis(XMFLOAT3 Axis) { m_xmf3RotatingAxis = Axis; }
+	void SetRotationSpeed(float Speed) { m_fRotatingSpeed = Speed; }
+	void SetRotationAxis(XMFLOAT3 Axis) { m_xmf3RotatingAxis = Axis; }
 
 	virtual void Animate(float TimeElapsed);
 };

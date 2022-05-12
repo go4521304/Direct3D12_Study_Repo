@@ -24,29 +24,24 @@ void Scene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* co
 	//그래픽 루트 시그너쳐를 생성한다. 
 	m_pRootSignature = CreateGraphicsRootSignature(pd3dDevice);
 
-	CubeMeshDiffused* pMesh = new CubeMeshDiffused(pd3dDevice, commandList, 12.0f, 12.0f, 12.0f);
-
-	unique_ptr<RotatingObject>pObject(new RotatingObject);
-	pObject->SetMesh(pMesh);
-
-	DiffusedShader* pShader = new DiffusedShader();
-	pShader->CreateShader(pd3dDevice, m_pRootSignature.Get());
-	pShader->CreateShaderVariables(pd3dDevice, commandList);
-
-	pObject->SetShader(pShader);
-	m_ppObjects.push_back(move(pObject));
+	m_pShader.emplace_back(new ObjectShader);
+	m_pShader.back()->CreateShader(pd3dDevice, m_pRootSignature.Get());
+	m_pShader.back()->BuildObjects(pd3dDevice, commandList);
 }
 
 void Scene::ReleaseObjects()
 {
-	m_pRootSignature.Reset();
-
-	m_ppObjects.clear();
+	for (auto& i : m_pShader)
+	{
+		i->ReleaseShaderVariables();
+		i->ReleaseObjects();
+	}
+	m_pShader.clear();
 }
 
 void Scene::ReleaseUploadBuffers()
 {
-	for (const auto& i : m_ppObjects)
+	for (const auto& i : m_pShader)
 	{
 		i->ReleaseUploadBuffers();
 	}
@@ -91,9 +86,9 @@ bool Scene::ProcessInput(UCHAR* pKeysBuffer)
 
 void Scene::AnimateObjects(float timeElapsed)
 {
-	for (const auto& i : m_ppObjects)
+	for (const auto& i : m_pShader)
 	{
-		i->Animate(timeElapsed);
+		i->AnimateObjects(timeElapsed);
 	}
 }
 
@@ -101,10 +96,9 @@ void Scene::Render(ID3D12GraphicsCommandList* commandList, Camera* pCamera)
 {
 	pCamera->SetViewportsAndScissorRects(commandList);
 	commandList->SetGraphicsRootSignature(m_pRootSignature.Get());
-
 	if (pCamera) pCamera->UpdateShaderVariables(commandList);
 
-	for (const auto& i : m_ppObjects)
+	for (const auto& i : m_pShader)
 	{
 		i->Render(commandList, pCamera);
 	}

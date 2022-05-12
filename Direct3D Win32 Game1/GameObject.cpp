@@ -102,6 +102,30 @@ XMFLOAT3 GameObject::GetRight()
 	return Vector3::Normalize(XMFLOAT3(worldMatrix._11, worldMatrix._12, worldMatrix._13));
 }
 
+void GameObject::MoveStrafe(float distance)
+{
+	XMFLOAT3 position = GetPosition();
+	XMFLOAT3 right = GetRight();
+	position = Vector3::Add(position, right, distance);
+	GameObject::SetPosition(position);
+}
+
+void GameObject::MoveUp(float distance)
+{
+	XMFLOAT3 position = GetPosition();
+	XMFLOAT3 up = GetUp();
+	position = Vector3::Add(position, up, distance);
+	GameObject::SetPosition(position);
+}
+
+void GameObject::MoveForward(float distance)
+{
+	XMFLOAT3 position = GetPosition();
+	XMFLOAT3 look = GetLook();
+	position = Vector3::Add(position, look, distance);
+	GameObject::SetPosition(position);
+}
+
 void GameObject::OnPrepareRender()
 {
 }

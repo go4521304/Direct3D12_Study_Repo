@@ -552,25 +552,39 @@ void Game::BuildObject()
     m_pCamera->SetViewport(0, 0, m_outputWidth, m_outputHeight, 0.0f, 1.0f);
     m_pCamera->SetScissorRect(0, 0, m_outputWidth, m_outputHeight);
     m_pCamera->GenerateProjectionMatrix(1.0f, 500.0f, float(m_outputWidth) / float(m_outputHeight), 90.0f);
-    m_pCamera->GenerateViewMatrix(XMFLOAT3(0.0f, 15.0f, -25.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.0f, 1.0f, 0.0f));
+    m_pCamera->GenerateViewMatrix(XMFLOAT3(0.0f, 0.0f, -50.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.0f, 1.0f, 0.0f));
 
     //씬 객체를 생성하고 씬에 포함될 게임 객체들을 생성한다.
-    m_pScene = make_unique<Scene>();
-    if (m_pScene) m_pScene->BuildObjects(m_d3dDevice.Get(), m_commandList.Get());
+    if (!m_pScene)
+    {
+        m_pScene = make_unique<Scene>();
+        if (m_pScene) m_pScene->BuildObjects(m_d3dDevice.Get(), m_commandList.Get());
 
-    //씬 객체를 생성하기 위하여 필요한 그래픽 명령 리스트들을 명령 큐에 추가한다. 
-    m_commandList->Close();
-    ID3D12CommandList* pcommandLists[] = { m_commandList.Get()};
-    m_commandQueue->ExecuteCommandLists(1, pcommandLists);
+        //씬 객체를 생성하기 위하여 필요한 그래픽 명령 리스트들을 명령 큐에 추가한다. 
+        m_commandList->Close();
+        ID3D12CommandList* pcommandLists[] = { m_commandList.Get() };
+        m_commandQueue->ExecuteCommandLists(1, pcommandLists);
 
-    //그래픽 명령 리스트들이 모두 실행될 때까지 기다린다.
-    WaitForGpu();
+        //그래픽 명령 리스트들이 모두 실행될 때까지 기다린다.
+        WaitForGpu();
 
-    //그래픽 리소스들을 생성하는 과정에 생성된 업로드 버퍼들을 소멸시킨다. 
-    if (m_pScene)
-        m_pScene->ReleaseUploadBuffers();
+        //그래픽 리소스들을 생성하는 과정에 생성된 업로드 버퍼들을 소멸시킨다. 
+        if (m_pScene)
+            m_pScene->ReleaseUploadBuffers();
 
-    m_timer.ResetElapsedTime();
+        m_timer.ResetElapsedTime();
+    }
+
+    else
+    {
+        //씬 객체를 생성하기 위하여 필요한 그래픽 명령 리스트들을 명령 큐에 추가한다. 
+        m_commandList->Close();
+        ID3D12CommandList* pcommandLists[] = { m_commandList.Get() };
+        m_commandQueue->ExecuteCommandLists(1, pcommandLists);
+
+        //그래픽 명령 리스트들이 모두 실행될 때까지 기다린다.
+        WaitForGpu();
+    }
 }
 
 void Game::ReleseObject()

@@ -30,6 +30,5 @@ private:
 	ComPtr<ID3D12PipelineState>		m_pPipelineState;
 
 protected:
-	//씬은 게임 객체들의 집합이다. 게임 객체는 셰이더를 포함한다.
-	vector<unique_ptr<GameObject>> m_ppObjects;
+	vector<unique_ptr<ObjectShader>> m_pShader;
 };
